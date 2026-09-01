@@ -1,0 +1,249 @@
+# PITX + OFFIX route inventory
+
+Crawled: 2026-08-27 (Asia/Manila)
+
+## Summary
+
+- PITX XML-indexed URLs: 217
+- PITX live (HTTP 200): 205
+- PITX indexed but currently failing (HTTP 500): 12
+- Additional live PITX routes found in navigation but omitted from XML: 3 (two are legacy redirect aliases)
+- OFFIX routes exposed by rendered navigation: 1
+
+## Sources and completeness checks
+
+- `https://pitx.ph/robots.txt` → `https://www.pitx.ph/sitemap_index.xml`
+- All 8 PITX child sitemaps enumerated: posts, pages, tourist destinations, categories, store categories, transport options, provinces, cities.
+- Every one of the 217 PITX XML URLs was requested and status-checked.
+- Rendered internal navigation on both home pages was inspected for routes absent from XML.
+- `https://offix.pitx.ph/robots.txt` advertises `https://offix.pitx.ph/sitemap_index.xml`, but Cloudflare returned 403 to raw sitemap requests. The browser-rendered OFFIX site contains no same-host page links other than `/`. Therefore OFFIX is reported as a one-page site, with this caveat.
+
+## Additional/legacy PITX routes omitted from XML
+
+- `https://pitx.ph/press-release/` — 200
+- `https://pitx.ph/business-opportunity/retail-commercial-spaces/` — redirects to `/leasing-opportunity/retail-commercial-spaces/`
+- `https://pitx.ph/business-opportunity/office-spaces/` — redirects to `/leasing-opportunity/office-spaces/`
+
+## OFFIX routes
+
+- `https://offix.pitx.ph/` — browser-rendered successfully; direct HTTP is Cloudflare challenged
+
+## PITX XML-indexed routes
+
+- `/` — HTTP 200
+- `/about/` — HTTP 200
+- `/about/about-pitx/` — HTTP 200
+- `/bridging-logistics-lalamove-philippines-moves-to-pitx-to-strengthen-its-logistics-operations/` — HTTP 200
+- `/category/events/` — HTTP 200
+- `/category/safety/` — HTTP 200
+- `/category/updates/` — HTTP 200
+- `/cities/alabang/` — HTTP 200
+- `/cities/alfonso/` — HTTP 200
+- `/cities/amadeo/` — HTTP 200
+- `/cities/antipolo-city/` — HTTP 200
+- `/cities/aseana-loop-service/` — HTTP 200
+- `/cities/baclaran/` — HTTP 200
+- `/cities/bagamanoc/` — HTTP 200
+- `/cities/baguio-city/` — HTTP 200
+- `/cities/balagtas/` — HTTP 200
+- `/cities/balanga/` — HTTP 200
+- `/cities/balatan/` — HTTP 200
+- `/cities/balibago/` — HTTP 200
+- `/cities/banaue/` — HTTP 200
+- `/cities/baras/` — HTTP 200
+- `/cities/batangas-city/` — HTTP 200
+- `/cities/borongan-city/` — HTTP 200
+- `/cities/buendia-via-sm-moa/` — HTTP 200
+- `/cities/buhi/` — HTTP 200
+- `/cities/bulan/` — HTTP 200
+- `/cities/butuan-city/` — HTTP 200
+- `/cities/cagayan-de-oro/` — HTTP 200
+- `/cities/calauag/` — HTTP 200
+- `/cities/calbayog-city/` — HTTP 200
+- `/cities/catarman/` — HTTP 200
+- `/cities/cavite-city/` — HTTP 200
+- `/cities/cebu-city/` — HTTP 200
+- `/cities/city-of-dreams-cod/` — HTTP 200
+- `/cities/clark-international-airport/` — HTTP 200
+- `/cities/clark/` — HTTP 200
+- `/cities/daet/` — HTTP 200
+- `/cities/dagupan/` — HTTP 200
+- `/cities/dasmarinas/` — HTTP 200
+- `/cities/davao-city/` — HTTP 200
+- `/cities/divisoria-via-mabini/` — HTTP 200
+- `/cities/divisoria-via-taft/` — HTTP 200
+- `/cities/edsa-carousel/` — HTTP 200
+- `/cities/fairview/` — HTTP 200
+- `/cities/fti/` — HTTP 200
+- `/cities/general-santos-city/` — HTTP 200
+- `/cities/gma/` — HTTP 200
+- `/cities/gubat/` — HTTP 200
+- `/cities/guinayangan/` — HTTP 200
+- `/cities/guiuan/` — HTTP 200
+- `/cities/iloilo-city/` — HTTP 200
+- `/cities/iriga-city/` — HTTP 200
+- `/cities/jose-panganiban/` — HTTP 200
+- `/cities/junction-luna/` — HTTP 200
+- `/cities/lagangilang/` — HTTP 200
+- `/cities/lagonoy/` — HTTP 200
+- `/cities/lancaster-city/` — HTTP 200
+- `/cities/laoag/` — HTTP 200
+- `/cities/laoang/` — HTTP 200
+- `/cities/legazpi-city/` — HTTP 200
+- `/cities/liloan/` — HTTP 200
+- `/cities/lipa-city/` — HTTP 200
+- `/cities/lucena-city/` — HTTP 200
+- `/cities/maasin-city/` — HTTP 200
+- `/cities/magallanes/` — HTTP 200
+- `/cities/maragondon/` — HTTP 200
+- `/cities/masbate-city/` — HTTP 200
+- `/cities/matnog/` — HTTP 200
+- `/cities/mendez/` — HTTP 200
+- `/cities/molino/` — HTTP 200
+- `/cities/nabua/` — HTTP 200
+- `/cities/naga-city/` — HTTP 200
+- `/cities/naia-1-2-3-4/` — HTTP 200
+- `/cities/naic/` — HTTP 200
+- `/cities/nasugbu-via-aguinaldo-highway/` — HTTP 200
+- `/cities/nasugbu-via-kaybiang/` — HTTP 200
+- `/cities/nichols/` — HTTP 200
+- `/cities/north-edsa/` — HTTP 200
+- `/cities/okada/` — HTTP 200
+- `/cities/olongapo-city/` — HTTP 200
+- `/cities/oras/` — HTTP 200
+- `/cities/ormoc-city/` — HTTP 200
+- `/cities/paliparan/` — HTTP 200
+- `/cities/palompon/` — HTTP 200
+- `/cities/paracale/` — HTTP 200
+- `/cities/pilar/` — HTTP 200
+- `/cities/pio-duran/` — HTTP 200
+- `/cities/san-andres/` — HTTP 200
+- `/cities/san-carlos-city/` — HTTP 200
+- `/cities/san-jose-sabang/` — HTTP 200
+- `/cities/san-jose/` — HTTP 200
+- `/cities/san-juan/` — HTTP 200
+- `/cities/sapang-palay/` — HTTP 200
+- `/cities/silang/` — HTTP 200
+- `/cities/solaire/` — HTTP 200
+- `/cities/sorsogon-city/` — HTTP 200
+- `/cities/sta-ana/` — HTTP 200
+- `/cities/sta-cruz/` — HTTP 200
+- `/cities/sta-elena/` — HTTP 200
+- `/cities/sucat/` — HTTP 200
+- `/cities/tabaco-city/` — HTTP 200
+- `/cities/tacloban-city/` — HTTP 200
+- `/cities/tagaytay/` — HTTP 200
+- `/cities/tagbilaran-city/` — HTTP 200
+- `/cities/tagkawayan/` — HTTP 200
+- `/cities/tagum-city/` — HTTP 200
+- `/cities/tanza/` — HTTP 200
+- `/cities/ternate/` — HTTP 200
+- `/cities/tiwi/` — HTTP 200
+- `/cities/trece-martires/` — HTTP 200
+- `/cities/tuguegarao-city/` — HTTP 200
+- `/cities/viga/` — HTTP 200
+- `/cities/virac/` — HTTP 200
+- `/contact-us/` — HTTP 200
+- `/dotr-and-pcg-conduct-valentines-day-campaign-at-pitx/` — HTTP 200
+- `/dotr-landbank-rollout-automated-fare-system-at-pitx/` — HTTP 200
+- `/dotr-reiterates-essential-workers-exempt-from-no-vax-no-ride-policy/` — HTTP 200
+- `/enforcement-intensifies-around-pitx-against-illegal-drop-off-points-terminals/` — HTTP 200
+- `/form-test/` — HTTP 200
+- `/holy-week-2023-schedule/` — HTTP 200
+- `/latest-updates/` — HTTP 200
+- `/leasing-2/` — HTTP 200
+- `/leasing-opportunity/` — HTTP 200
+- `/leasing-opportunity/advertising-promotions/` — HTTP 200
+- `/leasing-opportunity/office-spaces/` — HTTP 200
+- `/leasing-opportunity/retail-commercial-spaces/` — HTTP 200
+- `/low-capex-high-access-the-offix-at-pitx-becomes-south-metros-strategic-ops-hub/` — HTTP 200
+- `/news/` — HTTP 200
+- `/passengers-guide/` — HTTP 200
+- `/passengers-guide/landport-policies/` — HTTP 200
+- `/passengers-guide/things-to-do/` — HTTP 200
+- `/passengers-guide/transport/` — HTTP 200
+- `/passengers-guide/transport/how-to-get-to-pitx/` — HTTP 200
+- `/pitx-achieves-milestone-of-146-million-overall-foot-traffic-since-it-started-operations-in-2019/` — HTTP 200
+- `/pitx-celebrates-mothers-day-with-a-special-treat-a-mothers-day-off/` — HTTP 200
+- `/pitx-empowers-communities-amid-energy-crisis-de-loading-consumption-equivalent-to-9019-households-during-luzon-grid-red-alert/` — HTTP 200
+- `/pitx-gears-up-for-1-2-m-passengers-this-coming-holy-week-exodus/` — HTTP 200
+- `/pitx-gears-up-for-a-seamless-travel-experience-this-chinese-new-year-long-weekend/` — HTTP 200
+- `/pitx-government-agencies-mobilize-for-holy-week-exodus-as-passenger-surge-expected/` — HTTP 200
+- `/pitx-kicked-off-its-4th-anniversary-celebrations-with-love-radio/` — HTTP 200
+- `/pitx-launched-its-corporate-social-responsibility-program-sweep-sweep-broom-broom/` — HTTP 200
+- `/pitx-launches-innovative-get-ev-shuttle-service-for-sustainable-and-reliable-commuting/` — HTTP 200
+- `/pitx-launches-who-will-be-the-fried-of-pitx-chicken-fest-sticker-redemption-2024/` — HTTP 200
+- `/pitx-office-towers-welcomes-dos1-expansion-strengthening-business-hub/` — HTTP 200
+- `/pitx-opens-routes-to-bohol/` — HTTP 200
+- `/pitx-partners-with-aub-for-enhanced-payment-solution/` — HTTP 200
+- `/pitx-puv-drivers-undergo-random-drug-test-by-pdea-and-lto/` — HTTP 200
+- `/pitx-receives-two-special-recognition-from-iact-at-your-service-awards/` — HTTP 200
+- `/pitx-records-100-million-passengers-since-2018/` — HTTP 200
+- `/pitx-to-breach-a-new-milestone-serving-150-million-passengers-within-2024/` — HTTP 200
+- `/pitx-welcomes-denr-mimaropa-and-denr-emb-calabarzon-a-new-hub-for-accessibility-and-convenience/` — HTTP 200
+- `/pitx-welcomes-robinsons-easymarts-120th-store/` — HTTP 200
+- `/privacy-policy/` — HTTP 200
+- `/provinces/abra/` — HTTP 200
+- `/provinces/agusan-del-norte/` — HTTP 200
+- `/provinces/albay/` — HTTP 200
+- `/provinces/bataan/` — HTTP 200
+- `/provinces/batangas/` — HTTP 200
+- `/provinces/benguet/` — HTTP 200
+- `/provinces/bohol/` — HTTP 200
+- `/provinces/bulacan/` — HTTP 200
+- `/provinces/cagayan-province/` — HTTP 200
+- `/provinces/camarines-norte/` — HTTP 200
+- `/provinces/camarines-sur/` — HTTP 200
+- `/provinces/catanduanes/` — HTTP 200
+- `/provinces/cavite/` — HTTP 200
+- `/provinces/cebu/` — HTTP 200
+- `/provinces/davao-del-norte/` — HTTP 200
+- `/provinces/davao-del-sur/` — HTTP 200
+- `/provinces/dinagat-islands/` — HTTP 200
+- `/provinces/eastern-samar/` — HTTP 200
+- `/provinces/ifugao/` — HTTP 200
+- `/provinces/ilocos-norte/` — HTTP 200
+- `/provinces/iloilo/` — HTTP 200
+- `/provinces/laguna/` — HTTP 200
+- `/provinces/leyte/` — HTTP 200
+- `/provinces/masbate/` — HTTP 200
+- `/provinces/metro-manila/` — HTTP 200
+- `/provinces/misamis-oriental/` — HTTP 200
+- `/provinces/northern-samar/` — HTTP 200
+- `/provinces/nueva-ecija/` — HTTP 200
+- `/provinces/occidental-mindoro/` — HTTP 200
+- `/provinces/pampanga/` — HTTP 200
+- `/provinces/pangasinan/` — HTTP 200
+- `/provinces/quezon-province/` — HTTP 200
+- `/provinces/rizal/` — HTTP 200
+- `/provinces/samar/` — HTTP 200
+- `/provinces/sorsogon/` — HTTP 200
+- `/provinces/south-cotabato/` — HTTP 200
+- `/provinces/southern-leyte/` — HTTP 200
+- `/provinces/zambales/` — HTTP 200
+- `/psa-philsys-opens-registration-center-at-pitx/` — HTTP 200
+- `/road-safety-month-celebrated-at-pitx-with-lto-nlex-cavitex/` — HTTP 200
+- `/routes-guide/` — HTTP 200
+- `/store_category/dining/` — HTTP 200
+- `/store_category/services/` — HTTP 200
+- `/store_category/shopping/` — HTTP 200
+- `/terminal-guide/` — HTTP 200
+- `/terms-conditions/` — HTTP 200
+- `/tourist-destination/` — HTTP 200
+- `/tourist_destination/la-union/` — HTTP 200
+- `/tourist_destination/manila/` — HTTP 200
+- `/tourist_destination/places-to-stay-during-the-pandemic/` — HTTP 200
+- `/tourist_destination/zambales/` — HTTP 200
+- `/who-will-be-the-fried-of-pitx-pitx-announces-first-ever-redemption-promotion-for-chicken-festival/` — HTTP 200
+- `/transport_option/airport-bus/` — HTTP 500
+- `/transport_option/bus-1/` — HTTP 500
+- `/transport_option/cavite-bus/` — HTTP 500
+- `/transport_option/city-bus/` — HTTP 500
+- `/transport_option/ev-taxi/` — HTTP 500
+- `/transport_option/jeep-1/` — HTTP 500
+- `/transport_option/metered-taxi/` — HTTP 500
+- `/transport_option/modern-jeep/` — HTTP 500
+- `/transport_option/p2p-bus/` — HTTP 500
+- `/transport_option/shuttle-service/` — HTTP 500
+- `/transport_option/tnvs/` — HTTP 500
+- `/transport_option/uv/` — HTTP 500
