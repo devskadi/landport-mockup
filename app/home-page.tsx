@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { Bus, ChevronDown, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import JourneyProgress from "./journey-progress";
+import { useScrollJourney } from "./use-scroll-journey";
 
 const dropdownNav = [
   { label: "Passenger’s Guide", items: [["Transport Options", "#passengers-guide"], ["Things to Do", "#things-to-do"], ["Terminal Features", "#modern-hub"]] },
@@ -13,7 +15,7 @@ const rides = [
   ["Bus", "/assets/icon-bus.svg"],
   ["Taxi", "/assets/icon-taxi.svg"],
   ["PUJ", "/assets/icon-puj.svg"],
-  ["LRT Line 1 Extension", "/assets/icon-lrt.svg"],
+  ["LRT 1", "/assets/icon-lrt.svg"],
 ];
 const featureTabs = [
   { title: "Accessible Location", text: "PITX is strategically located in Diosdado Macapagal Boulevard and CAVITEX which connects the South and Metro Manila.", image: "/assets/accessible.jpg" },
@@ -35,8 +37,8 @@ const routeOptions: Record<string, string[]> = {
   Quezon: ["Lucena City", "Tagkawayan"],
 };
 const transportOptions = ["Bus", "Modern Jeep", "P2P Bus", "UV Express"];
-
 export default function HomePage() {
+  const pageRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState("");
   const [scheduleOpen, setScheduleOpen] = useState(false);
@@ -45,6 +47,15 @@ export default function HomePage() {
   const [city, setCity] = useState("");
   const [transport, setTransport] = useState("");
   const [routeMessage, setRouteMessage] = useState("");
+  const [activeStop, setActiveStop] = useState("arrival");
+
+  const handleFeatureChange = useCallback((index: number) => setActiveTab(index), []);
+  const handleProgressChange = useCallback((progress: number) => {
+    document.documentElement.style.setProperty("--journey-progress", `${Math.max(0, Math.min(progress, 1)) * 100}%`);
+  }, []);
+  const handleStopChange = useCallback((stop: string) => setActiveStop(stop), []);
+
+  useScrollJourney({ root: pageRef, onFeatureChange: handleFeatureChange, onProgressChange: handleProgressChange, onStopChange: handleStopChange });
 
   useEffect(() => {
     document.body.style.overflow = scheduleOpen ? "hidden" : "";
@@ -68,6 +79,7 @@ export default function HomePage() {
 
   return (
     <>
+      <a className="skip-link" href="#arrival">Skip to content</a>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="PITX home"><Image src="/assets/logo.png" alt="PITX Parañaque Integrated Terminal Exchange" width={360} height={33} priority /></a>
         <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Toggle navigation"><span /><span /><span /></button>
@@ -91,8 +103,10 @@ export default function HomePage() {
         </nav>
       </header>
 
-      <main id="top">
-        <section className="hero">
+      <main id="top" ref={pageRef}>
+        <div className="opening-journey">
+        <section className="hero" id="arrival">
+          <div className="hero-media" aria-hidden="true" />
           <div className="hero-kicker" aria-label="Welcome to the Philippines’ first-ever LANDPORT">
             <div className="marquee-track">
               {[0, 1].map((copy) => (
@@ -104,9 +118,9 @@ export default function HomePage() {
             </div>
           </div>
           <div className="hero-copy">
-            <h1>Welcome to PITX, friends!</h1>
+            <h1 className="hero-intro">Welcome to PITX, friends!</h1>
             <p>Experience safe, convenient, and comfortable commute here at PITX, the country’s first landport.</p>
-            <form className="route-search" onSubmit={(event) => {
+            <form className="route-search hero-intro" onSubmit={(event) => {
               event.preventDefault();
               if (!province || !city || !transport) return;
               setRouteMessage(`${transport} routes to ${city}, ${province}`);
@@ -139,44 +153,64 @@ export default function HomePage() {
           <button className={scheduleOpen ? "schedule-tab schedule-tab-open" : "schedule-tab"} onClick={() => setScheduleOpen(true)}>LIVE BUS SCHEDULE</button>
         </section>
 
-        <section className="statement section-pad">
-          <div className="statement-frame">
-            <div className="statement-copy">
-              <h2>Seamless interconnectivity.<br />Friendly service. First-world facility.</h2>
-              <p>With our first-world facilities and friendly service, you can now enjoy seamless interconnectivity from the moment you arrive, until you reach your destination.</p>
+        <div className="mobile-cloud-transition" aria-hidden="true" />
+
+        <section className="statement section-pad" aria-label="PITX terminal introduction">
+          <div className="statement-sky" aria-hidden="true" />
+          <div className="statement-frame" aria-hidden="true" />
+          <div className="statement-copy">
+            <h2>Seamless interconnectivity.<br />Friendly service. First-world facility.</h2>
+            <p>With our first-world facilities and friendly service, you can now enjoy seamless interconnectivity from the moment you arrive, until you reach your destination.</p>
+          </div>
+          <Image className="statement-foreground" src="/assets/pitx-section-foreground.png" alt="" fill sizes="100vw" priority unoptimized aria-hidden="true" />
+        </section>
+        </div>
+
+        <section className="transport section-pad" id="transport">
+          <span id="passengers-guide" className="legacy-anchor" aria-hidden="true" />
+          <div className="transport-main">
+            <div className="transport-copy">
+              <p className="eyebrow">TRANSPORTATION</p>
+              <h2>Choose your ride</h2>
+              <p>PITX provides multimodal transport options to get you to your destination.</p>
             </div>
+            <div className="transport-image transport-image-reveal"><Image src="/assets/choose-ride.jpg" alt="PITX passenger concourse" fill sizes="(max-width: 800px) 100vw, 58vw" /></div>
           </div>
-          <Image className="statement-foreground" src="/assets/pitx-section-foreground.png" alt="" fill sizes="100vw" unoptimized aria-hidden="true" />
+          <div className="transport-route" role="group" aria-label="Transportation route illustration">
+            <span className="transport-route-segment transport-route-segment-0" aria-hidden="true" />
+            <span className="transport-route-segment transport-route-segment-1" aria-hidden="true" />
+            <span className="transport-route-segment transport-route-segment-2" aria-hidden="true" />
+            { [rides[0], rides[2], rides[1], rides[3]].map(([name, icon], index) => (
+              <div className={`transport-route-node transport-route-node-${index}`} key={`${name}-${index}`}>
+                <Image src={icon} alt={name} width={110} height={110} />
+              </div>
+            )) }
+          </div>
         </section>
 
-        <section className="transport section-pad" id="passengers-guide">
-          <div className="transport-image"><Image src="/assets/choose-ride.jpg" alt="PITX passenger concourse" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
-          <div className="transport-copy">
-            <p className="eyebrow">TRANSPORTATION</p>
-            <h2>Choose your ride</h2>
-            <p>PITX provides multimodal transport options to get you to your destination.</p>
-            <a className="read-more" href="#modern-hub">READ MORE <span>→</span></a>
-            <div className="ride-grid">{rides.map(([name, icon]) => <div className="ride" key={name}><Image src={icon} alt="" width={58} height={58} /><h3>{name}</h3></div>)}</div>
-          </div>
-        </section>
-
-        <section className="things section-pad" id="things-to-do">
+        <section className="things section-pad" id="explore">
+          <span id="things-to-do" className="legacy-anchor" aria-hidden="true" />
           <p className="eyebrow">THINGS TO DO</p>
           <h2>Shop and dine while you wait</h2>
           <p className="section-intro">PITX offers a wide range of dining and shopping options for a convenient commuting experience.</p>
-          <div className="cards">
+          <div className="cards-viewport">
+          <div className="cards cards-rail">
             {[
               ["Places to Dine", "Grab a quick bite or dine in at one of our restaurants so you can get your fill before commuting.", "/assets/dining.jpg"],
               ["Places to Shop", "Shop from your favorite brands while stocking up on those last-minute travel essentials.", "/assets/shopping.jpg"],
               ["Services", "Enjoy a safe and comfortable commute with our choice of travel and leisure services.", "/assets/services.jpg"],
             ].map(([title, text, image]) => <article className="thing-card" key={title} style={{ backgroundImage: `linear-gradient(180deg, transparent 22%, rgba(14,35,100,.92) 100%), url(${image})` }}><div><h3>{title}</h3><p>{text}</p><span>READ MORE →</span></div></article>)}
           </div>
+          </div>
         </section>
 
-        <section className="modern" id="modern-hub">
+        <section className="modern" id="features">
+          <span id="modern-hub" className="legacy-anchor" aria-hidden="true" />
           <div className="modern-heading section-pad"><p className="eyebrow">TERMINAL FEATURES</p><h2>The Country’s First Landport</h2><p className="section-intro">PITX serves as your transfer point for provincial and in-city transportation, so you can conveniently commute</p></div>
           <div className="feature-panel">
-            <div className="feature-image" role="img" aria-label={featureTabs[activeTab].title} style={{ backgroundImage: `url(${featureTabs[activeTab].image})` }} />
+            <div className="feature-image">
+              <div key={activeTab} className="feature-image-content" role="img" aria-label={featureTabs[activeTab].title} style={{ backgroundImage: `url(${featureTabs[activeTab].image})` }} />
+            </div>
             <div className="feature-tabs" role="tablist" aria-label="PITX features">
               <div className="feature-intro"><h2>Your Friendly and Modern Transport Hub</h2><p>Take advantage of these features when you visit PITX</p></div>
               {featureTabs.map((tab, index) => <button key={tab.title} type="button" role="tab" aria-selected={activeTab === index} className={activeTab === index ? "active" : ""} onClick={() => setActiveTab(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{tab.title}</h3>{activeTab === index ? <p>{tab.text}</p> : null}</div></button>)}
@@ -184,9 +218,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="contact section-pad" id="contact-us">
+        <section className="contact section-pad" id="contact">
+          <span id="contact-us" className="legacy-anchor" aria-hidden="true" />
           <div className="contact-layout">
-            <div className="contact-copy">
+            <div className="contact-copy soft-reveal">
               <p className="eyebrow">CONTACT US</p><h2>Get in touch</h2>
               <p className="contact-intro">Need help with your trip? Our team is here for you.</p>
               <a className="read-more contact-map-link" href="https://maps.google.com/?q=PITX" target="_blank" rel="noreferrer">VIEW IN MAPS <span>→</span></a>
@@ -197,12 +232,14 @@ export default function HomePage() {
                 <div><span className="contact-icon" aria-hidden="true">☎</span><div><h3>Phone</h3><a href="tel:+63283963817">8396-3817 to 18</a></div></div>
               </div>
             </div>
-            <div className="contact-map">
+            <div className="contact-map soft-reveal">
               <iframe src="https://www.google.com/maps?q=Paranaque%20Integrated%20Terminal%20Exchange%2C%20%231%20Kennedy%20Rd.%2C%20Tambo%2C%20Paranaque%20City&output=embed" title="PITX location on Google Maps" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
             </div>
           </div>
         </section>
       </main>
+
+      <JourneyProgress activeStop={activeStop} subdued={scheduleOpen} visible={["transport", "explore", "features"].includes(activeStop)} />
 
       <footer>
         <div className="footer-layout">
@@ -226,7 +263,7 @@ export default function HomePage() {
           <div className="schedule-table" role="table" aria-label="Live bus departures">
             <div className="schedule-table-head" role="row"><span role="columnheader">Operator</span><span role="columnheader">Route</span><span role="columnheader">Gate</span><span role="columnheader">Bay</span><span role="columnheader">Status</span></div>
             <div className="schedule-time-band">LIVE DEPARTURES</div>
-            {scheduleGroups.map((group) => <div className="schedule-table-group" key={group.time}><div className="schedule-time-band">{group.time}</div>{group.rows.map(([operator, route, gate, bay, status]) => <div className="schedule-table-row" role="row" key={`${group.time}-${operator}-${route}-${gate}`}><strong role="cell">{operator}</strong><span role="cell">{route}</span><span role="cell">{gate}</span><span role="cell">{bay}</span><time className={`schedule-status ${status === "CANCELLED" ? "cancelled" : status === "ARRIVING" ? "arriving" : "pending"}`} role="cell">{status || "·"}</time></div>)}</div>)}
+            {scheduleGroups.map((group) => <div className="schedule-table-group" key={group.time}><div className="schedule-time-band">{group.time}</div>{group.rows.map(([operator, route, gate, bay, status]) => <div className="schedule-table-row" role="row" key={`${group.time}-${operator}-${route}-${gate}-${bay}`}><strong role="cell">{operator}</strong><span role="cell">{route}</span><span role="cell">{gate}</span><span role="cell">{bay}</span><time className={`schedule-status ${status === "CANCELLED" ? "cancelled" : status === "ARRIVING" ? "arriving" : "pending"}`} role="cell">{status || "·"}</time></div>)}</div>)}
           </div>
         </section>
       </div>
