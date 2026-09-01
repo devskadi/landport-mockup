@@ -176,29 +176,47 @@ export default function HomePage() {
         </section>
 
         <section className="modern" id="modern-hub">
-          <div className="modern-heading section-pad"><p className="eyebrow">THE COUNTRY’S FIRST LANDPORT</p><h2>Your Friendly and Modern Transport Hub</h2><p>Take advantage of these features when you visit PITX</p></div>
+          <div className="modern-heading section-pad"><p className="eyebrow">TERMINAL FEATURES</p><h2>The Country’s First Landport</h2><p className="section-intro">PITX serves as your transfer point for provincial and in-city transportation, so you can conveniently commute</p></div>
           <div className="feature-panel">
-            <div className="feature-image" style={{ backgroundImage: `url(${featureTabs[activeTab].image})` }} />
+            <div className="feature-image" role="img" aria-label={featureTabs[activeTab].title} style={{ backgroundImage: `url(${featureTabs[activeTab].image})` }} />
             <div className="feature-tabs" role="tablist" aria-label="PITX features">
-              {featureTabs.map((tab, index) => <button key={tab.title} role="tab" aria-selected={activeTab === index} className={activeTab === index ? "active" : ""} onClick={() => setActiveTab(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{tab.title}</h3>{activeTab === index ? <p>{tab.text}</p> : null}</div></button>)}
+              <div className="feature-intro"><h2>Your Friendly and Modern Transport Hub</h2><p>Take advantage of these features when you visit PITX</p></div>
+              {featureTabs.map((tab, index) => <button key={tab.title} type="button" role="tab" aria-selected={activeTab === index} className={activeTab === index ? "active" : ""} onClick={() => setActiveTab(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{tab.title}</h3>{activeTab === index ? <p>{tab.text}</p> : null}</div></button>)}
             </div>
           </div>
-          <p className="transfer-copy">PITX serves as your transfer point for provincial and in-city transportation, so you can conveniently commute along the busy thoroughfares of Metro Manila and the South.</p>
         </section>
 
         <section className="contact section-pad" id="contact-us">
-          <p className="eyebrow">CONTACT US</p><h2>Get in touch</h2>
-          <div className="contact-grid">
-            <div><span>✉</span><h3>Email</h3><a href="mailto:customerservice@pitx.com.ph">customerservice@pitx.com.ph</a></div>
-            <div><span>f</span><h3>Facebook</h3><a href="https://www.facebook.com/ParanaqueITX/">/ParanaqueITX</a></div>
-            <div><span>◎</span><h3>Instagram</h3><a href="https://www.instagram.com/pitx_landport/">@pitx_landport</a></div>
-            <div><span>☎</span><h3>Phone</h3><p>8396-3817 to 18</p></div>
-            <div className="address"><span>⌖</span><h3>Address</h3><a href="https://maps.google.com/?q=PITX">Parañaque Integrated Terminal Exchange, #1 Kennedy Rd., Tambo, Parañaque City</a></div>
+          <div className="contact-layout">
+            <div className="contact-copy">
+              <p className="eyebrow">CONTACT US</p><h2>Get in touch</h2>
+              <p className="contact-intro">Need help with your trip? Our team is here for you.</p>
+              <a className="read-more contact-map-link" href="https://maps.google.com/?q=PITX" target="_blank" rel="noreferrer">VIEW IN MAPS <span>→</span></a>
+              <div className="contact-info-grid">
+                <div><span className="contact-icon" aria-hidden="true">✉</span><div><h3>Email</h3><a href="mailto:customerservice@pitx.com.ph">customerservice@pitx.com.ph</a></div></div>
+                <div><span className="contact-icon" aria-hidden="true">f</span><div><h3>Facebook</h3><a href="https://www.facebook.com/ParanaqueITX/">/ParanaqueITX</a></div></div>
+                <div><span className="contact-icon" aria-hidden="true">◎</span><div><h3>Instagram</h3><a href="https://www.instagram.com/pitx_landport/">@pitx_landport</a></div></div>
+                <div><span className="contact-icon" aria-hidden="true">☎</span><div><h3>Phone</h3><a href="tel:+63283963817">8396-3817 to 18</a></div></div>
+              </div>
+            </div>
+            <div className="contact-map">
+              <iframe src="https://www.google.com/maps?q=Paranaque%20Integrated%20Terminal%20Exchange%2C%20%231%20Kennedy%20Rd.%2C%20Tambo%2C%20Paranaque%20City&output=embed" title="PITX location on Google Maps" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            </div>
           </div>
         </section>
       </main>
 
-      <footer><Image src="/assets/footer-logo.png" alt="PITX" width={190} height={82} /><div className="footer-links"><a href="#top">HOME</a><a href="#modern-hub">ABOUT US</a><a href="#passengers-guide">PASSENGER’S GUIDE</a><a href="#contact-us">CONTACT US</a></div><p>Parañaque Integrated Terminal Exchange, #1 Kennedy Rd., Tambo, Parañaque City</p><small>© PITX {new Date().getFullYear()} All rights reserved.</small></footer>
+      <footer>
+        <div className="footer-layout">
+          <div className="footer-brand"><Image src="/assets/footer-logo.png" alt="PITX" width={190} height={82} /></div>
+          <nav className="footer-nav" aria-label="Footer navigation">
+            <div className="footer-column footer-primary"><a className="footer-heading-link" href="#top">HOME</a><a className="footer-heading-link" href="#modern-hub">ABOUT US</a></div>
+            <div className="footer-column"><h3>PASSENGER’S GUIDE</h3><a href="#passengers-guide">Transport</a><a href="#things-to-do">Things to Do</a></div>
+            <div className="footer-column"><h3>LEASING OPPORTUNITY</h3><a href="#contact-us">Retail &amp; Commercial Spaces</a><a href="#contact-us">Office Spaces</a><a className="footer-heading-link footer-subheading" href="#modern-hub">NEWS</a><a className="footer-heading-link" href="#contact-us">CONTACT US</a></div>
+          </nav>
+          <div className="footer-contact"><p>Parañaque Integrated Terminal Exchange, #1 Kennedy Rd., Tambo, Parañaque City</p><div className="footer-social" aria-label="Social links"><a href="mailto:customerservice@pitx.com.ph" aria-label="Email">✉</a><a href="https://www.facebook.com/ParanaqueITX/" aria-label="Facebook">f</a><a href="https://www.instagram.com/pitx_landport/" aria-label="Instagram">◎</a></div><small>© PITX {new Date().getFullYear()} All rights reserved.</small></div>
+        </div>
+      </footer>
 
       {scheduleOpen ? <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setScheduleOpen(false); }}><section className="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="schedule-title"><button className="modal-close" onClick={() => setScheduleOpen(false)} aria-label="Close schedule">×</button><p className="eyebrow">DEPARTURES</p><h2 id="schedule-title">Live Bus Schedule</h2><p className="modal-note">Representative terminal schedule. Departure times may change; confirm with your operator before travel.</p><div className="schedule-list">{schedule.map(([destination, operator, hours]) => <div key={destination}><strong>{destination}</strong><span>{operator}</span><time>{hours}</time></div>)}</div></section></div> : null}
     </>
