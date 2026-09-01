@@ -22,12 +22,10 @@ const featureTabs = [
   { title: "Modern Features and Amenities", text: "PITX is equipped with modern features and amenities that are designed to address your daily commuting needs.", image: "/assets/amenities.jpg" },
   { title: "One-Stop Terminal", text: "PITX houses retail and office spaces where you can dine, shop, and avail government services, in one convenient location.", image: "/assets/one-stop.jpg" },
 ];
-const schedule = [
-  ["Baguio", "Solid North", "12:00 AM – 11:00 PM"],
-  ["Batangas", "Ceres / JAM", "4:00 AM – 9:00 PM"],
-  ["Cavite", "Various operators", "24 hours"],
-  ["Lucena", "JAC Liner", "3:00 AM – 10:00 PM"],
-  ["Naga", "DLTB / Penafrancia", "5:00 AM – 9:00 PM"],
+const scheduleGroups = [
+  { time: "01:00 PM", rows: [["RORO BUS", "MASBATE CITY", "4", "20", "CANCELLED"], ["GENESIS", "BALANGA", "5", "33", "CANCELLED"]] },
+  { time: "01:30 PM", rows: [["JAM/CHER", "BALIBAGO", "2", "8", ""], ["BARNEY AUTO LINES", "GUINAYANGAN", "2", "9", "CANCELLED"], ["BARNEY AUTO LINES", "STA. ELENA", "2", "10", "ARRIVING"], ["CERES-GOLDSTAR", "SAN JOSE", "2", "11", "ARRIVING"], ["BELLEZA TRANSPORT", "BULAN", "4", "20", "ARRIVING"], ["YOHANCE EXPRESS INC.", "CAGAYAN DE ORO", "4", "21", "ARRIVING"], ["MEGA BUS LINES CORP", "LAOANG", "4", "22", "ARRIVING"], ["UBE EXPRESS", "NAIA LOOP", "5", "32", "·"], ["SOLID NORTH", "DAGUPAN CITY", "5", "35", "CANCELLED"]] },
+  { time: "02:00 PM", rows: [["ALPS", "BATANGAS CITY", "2", "8", ""], ["ALPS", "LIPA CITY", "2", "9", ""], ["ALPS", "LIPA CITY", "2", "10", ""], ["CERES-GOLDSTAR", "SAN JOSE", "2", "11", "ARRIVING"]] },
 ];
 const routeOptions: Record<string, string[]> = {
   Cavite: ["Bacoor", "Dasmariñas", "Tagaytay", "Trece Martires"],
@@ -138,7 +136,7 @@ export default function HomePage() {
             </form>
             <p className="route-result" aria-live="polite">{routeMessage}</p>
           </div>
-          <button className="schedule-tab" onClick={() => setScheduleOpen(true)}>LIVE BUS SCHEDULE</button>
+          <button className={scheduleOpen ? "schedule-tab schedule-tab-open" : "schedule-tab"} onClick={() => setScheduleOpen(true)}>LIVE BUS SCHEDULE</button>
         </section>
 
         <section className="statement section-pad">
@@ -218,7 +216,20 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {scheduleOpen ? <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setScheduleOpen(false); }}><section className="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="schedule-title"><button className="modal-close" onClick={() => setScheduleOpen(false)} aria-label="Close schedule">×</button><p className="eyebrow">DEPARTURES</p><h2 id="schedule-title">Live Bus Schedule</h2><p className="modal-note">Representative terminal schedule. Departure times may change; confirm with your operator before travel.</p><div className="schedule-list">{schedule.map(([destination, operator, hours]) => <div key={destination}><strong>{destination}</strong><span>{operator}</span><time>{hours}</time></div>)}</div></section></div> : null}
+      <div className={scheduleOpen ? "schedule-drawer-layer open" : "schedule-drawer-layer"} aria-hidden={!scheduleOpen} onMouseDown={(e) => { if (e.target === e.currentTarget) setScheduleOpen(false); }}>
+        <section className="schedule-drawer" role="dialog" aria-modal={scheduleOpen} aria-labelledby="schedule-title">
+          <div className="schedule-drawer-topbar"><span>◉ LIVE</span><strong>BUS SCHEDULE</strong></div>
+          <button type="button" className="schedule-drawer-close" onClick={() => setScheduleOpen(false)} aria-label="Close schedule">×</button>
+          <h2 id="schedule-title" className="schedule-drawer-title">Live Bus Schedule</h2>
+          <p className="schedule-date">{new Intl.DateTimeFormat("en-US", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).format(new Date())}</p>
+          <p className="schedule-drawer-note">Representative terminal schedule. Departure times may change; confirm with your operator before travel.</p>
+          <div className="schedule-table" role="table" aria-label="Live bus departures">
+            <div className="schedule-table-head" role="row"><span role="columnheader">Operator</span><span role="columnheader">Route</span><span role="columnheader">Gate</span><span role="columnheader">Bay</span><span role="columnheader">Status</span></div>
+            <div className="schedule-time-band">LIVE DEPARTURES</div>
+            {scheduleGroups.map((group) => <div className="schedule-table-group" key={group.time}><div className="schedule-time-band">{group.time}</div>{group.rows.map(([operator, route, gate, bay, status]) => <div className="schedule-table-row" role="row" key={`${group.time}-${operator}-${route}-${gate}`}><strong role="cell">{operator}</strong><span role="cell">{route}</span><span role="cell">{gate}</span><span role="cell">{bay}</span><time className={`schedule-status ${status === "CANCELLED" ? "cancelled" : status === "ARRIVING" ? "arriving" : "pending"}`} role="cell">{status || "·"}</time></div>)}</div>)}
+          </div>
+        </section>
+      </div>
     </>
   );
 }

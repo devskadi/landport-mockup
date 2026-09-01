@@ -238,3 +238,47 @@ footer{background:#10266b;color:#fff;padding:64px max(6vw,24px) 30px;text-align:
 .contact-intro{margin-bottom:0}
 .contact-map-link{margin:22px 0 50px}
 @media(max-width:620px){.modern{padding-bottom:72px}}
+
+/* Live Bus Schedule right-side drawer */
+.schedule-tab{z-index:120;transition:right 320ms cubic-bezier(.22,1,.36,1)}
+.schedule-drawer-layer{position:fixed;inset:0;z-index:100;background:rgba(6,16,50,.28);opacity:0;visibility:hidden;pointer-events:none;transition:opacity 220ms ease,visibility 0s linear 320ms}
+.schedule-drawer-layer.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 220ms ease,visibility 0s}
+.schedule-drawer{position:absolute;top:0;right:0;width:min(620px,calc(100vw - 48px));height:100%;overflow:auto;background:#fff;color:var(--ink);padding:30px 28px 44px;box-shadow:-16px 0 40px rgba(8,19,58,.24);transform:translateX(100%);transition:transform 320ms cubic-bezier(.22,1,.36,1)}
+.schedule-drawer-layer.open .schedule-drawer{transform:translateX(0)}
+body:has(.schedule-drawer-layer.open) .schedule-tab{right:min(620px,calc(100vw - 48px))}
+.schedule-drawer-topbar{display:flex;width:max-content;margin:0 auto 26px;overflow:hidden;text-transform:uppercase;font-size:14px;letter-spacing:.03em}
+.schedule-drawer-topbar span,.schedule-drawer-topbar strong{display:block;padding:13px 18px;color:#fff;font-weight:800}
+.schedule-drawer-topbar span{background:#f5322e}
+.schedule-drawer-topbar strong{background:var(--blue)}
+.schedule-drawer-close{position:absolute;top:18px;right:20px;border:0;background:transparent;color:var(--blue);font-size:32px;line-height:1;cursor:pointer}
+.schedule-drawer-title{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.schedule-date{margin:8px 40px 22px;color:var(--blue);font-size:21px;font-weight:800;text-align:center;text-transform:uppercase}
+.schedule-drawer-note{max-width:500px;margin:0 auto 18px;color:#676d79;font-size:12px;line-height:1.5;text-align:center}
+.schedule-table{min-width:520px;margin-top:12px;border:1px solid #d2d5dc;border-bottom:0;overflow:hidden}
+.schedule-table-head,.schedule-table-row{display:grid;grid-template-columns:1.35fr 1.4fr .55fr .55fr .85fr;align-items:center}
+.schedule-table-head{padding:13px 8px;background:#f4f6fa;color:var(--blue);font-size:13px;font-weight:800;text-align:center}
+.schedule-table-head span:first-child,.schedule-table-row strong{text-align:left}
+.schedule-time-band{grid-column:1/-1;padding:12px 8px;background:var(--blue);color:#fff;font-size:17px;font-weight:800;text-align:center}
+.schedule-table-row{min-height:48px;border-bottom:1px solid #cfd3da;color:#30343d;font-size:12px;font-weight:700}
+.schedule-table-row>*{min-width:0;padding:12px 8px;border-right:1px solid #cfd3da;overflow-wrap:anywhere}
+.schedule-table-row>*:last-child{border-right:0}
+.schedule-table-row time{text-align:center;font-weight:800}
+.schedule-table-row small{display:none}
+.schedule-status{color:#fff!important;text-align:center}
+.schedule-status.cancelled{background:#f5322e}
+.schedule-status.arriving{background:#16a875}
+@media(max-width:620px){
+  .schedule-drawer{width:calc(100vw - 44px);padding:24px 16px 32px}
+  body:has(.schedule-drawer-layer.open) .schedule-tab{right:calc(100vw - 44px)}
+  .schedule-drawer-topbar{margin-bottom:22px}
+  .schedule-date{font-size:17px;margin-right:22px}
+  .schedule-table{min-width:500px}
+}
+
+
+.schedule-tab-open{right:min(620px,calc(100vw - 48px))}
+@media(max-width:620px){.schedule-tab-open{right:calc(100vw - 44px)}}
+
+
+.schedule-table-group{display:block}
+.schedule-status.pending{background:#fff;color:#f5322e!important}
