@@ -19,7 +19,9 @@ export default function ScrollReveal({ children }: { children: ReactNode }) {
     }
 
     const context = gsap.context(() => {
-      const elements = gsap.utils.toArray<HTMLElement>("[data-reveal]", root);
+      const elements = gsap.utils
+        .toArray<HTMLElement>("[data-reveal]", root)
+        .filter((element) => !element.closest("footer"));
 
       elements.forEach((element) => {
         const direction = (element.dataset.reveal as RevealDirection | undefined) ?? "up";
