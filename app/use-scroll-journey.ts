@@ -203,9 +203,9 @@ export function useScrollJourney({
 
         let lastFeature = -1;
         ScrollTrigger.create({
-          trigger: ".feature-panel",
-          start: "top 10%",
-          end: "+=150%",
+          trigger: ".feature-stage",
+          start: "top top",
+          end: "+=400%",
           pin: true,
           scrub: 0.5,
           anticipatePin: 1,

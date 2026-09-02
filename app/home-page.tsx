@@ -1,21 +1,27 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Bus, ChevronDown, Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import JourneyProgress from "./journey-progress";
 import { useScrollJourney } from "./use-scroll-journey";
 
+const ContactMap = dynamic(() => import("./contact-map"), {
+  ssr: false,
+  loading: () => <div className="contact-map-loading" aria-label="Loading the PITX map" role="status" />,
+});
+
 const dropdownNav = [
   { label: "Passenger’s Guide", items: [["Transport Options", "#passengers-guide"], ["Things to Do", "#things-to-do"], ["Terminal Features", "#modern-hub"]] },
   { label: "Leasing Opportunity", items: [["Retail & Commercial Spaces", "#contact-us"], ["Office Spaces", "#contact-us"], ["Advertising & Promotions", "#contact-us"]] },
   { label: "News", items: [["Latest Updates", "#modern-hub"], ["Press Releases", "#modern-hub"], ["Tourist Destinations", "#things-to-do"]] },
 ];
-const rides = [
-  ["Bus", "/assets/icon-bus.svg"],
-  ["Taxi", "/assets/icon-taxi.svg"],
-  ["PUJ", "/assets/icon-puj.svg"],
-  ["LRT 1", "/assets/icon-lrt.svg"],
+const transportGallery = [
+  { name: "Bus", icon: "/assets/icon-bus.svg", image: "/assets/choose-ride.jpg", alt: "Passengers boarding buses at PITX" },
+  { name: "Taxi", icon: "/assets/icon-taxi.svg", image: "/assets/accessible.jpg", alt: "PITX terminal access area" },
+  { name: "PUJ", icon: "/assets/icon-puj.svg", image: "/assets/amenities.jpg", alt: "PITX passenger ticket counter" },
+  { name: "LRT 1", icon: "/assets/icon-lrt.svg", image: "/assets/commuting.jpg", alt: "PITX transit turnstiles" },
 ];
 const featureTabs = [
   { title: "Accessible Location", text: "PITX is strategically located in Diosdado Macapagal Boulevard and CAVITEX which connects the South and Metro Manila.", image: "/assets/accessible.jpg" },
@@ -43,6 +49,7 @@ export default function HomePage() {
   const [openDropdown, setOpenDropdown] = useState("");
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [activeTransport, setActiveTransport] = useState(0);
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [transport, setTransport] = useState("");
@@ -168,23 +175,31 @@ export default function HomePage() {
 
         <section className="transport section-pad" id="transport">
           <span id="passengers-guide" className="legacy-anchor" aria-hidden="true" />
-          <div className="transport-main">
+          <div className="transport-heading">
             <div className="transport-copy">
               <p className="eyebrow">TRANSPORTATION</p>
               <h2>Choose your ride</h2>
               <p>PITX provides multimodal transport options to get you to your destination.</p>
             </div>
-            <div className="transport-image transport-image-reveal"><Image src="/assets/choose-ride.jpg" alt="PITX passenger concourse" fill sizes="(max-width: 800px) 100vw, 58vw" /></div>
+            <a className="transport-read-more" href="#passengers-guide">Read more</a>
           </div>
-          <div className="transport-route" role="group" aria-label="Transportation route illustration">
-            <span className="transport-route-segment transport-route-segment-0" aria-hidden="true" />
-            <span className="transport-route-segment transport-route-segment-1" aria-hidden="true" />
-            <span className="transport-route-segment transport-route-segment-2" aria-hidden="true" />
-            { [rides[0], rides[2], rides[1], rides[3]].map(([name, icon], index) => (
-              <div className={`transport-route-node transport-route-node-${index}`} key={`${name}-${index}`}>
-                <Image src={icon} alt={name} width={110} height={110} />
-              </div>
-            )) }
+          <div className="transport-gallery" aria-label="Choose a transportation option" onMouseLeave={() => setActiveTransport(0)}>
+            {transportGallery.map(({ name, icon, image, alt }, index) => (
+              <button
+                aria-pressed={activeTransport === index}
+                className={`transport-panel${activeTransport === index ? " transport-panel-active" : ""}`}
+                key={name}
+                onClick={() => setActiveTransport(index)}
+                onFocus={() => setActiveTransport(index)}
+                onMouseEnter={() => setActiveTransport(index)}
+                type="button"
+              >
+                <Image className="transport-panel-image" src={image} alt={alt} fill sizes="(max-width: 700px) 100vw, (max-width: 1000px) 50vw, 50vw" />
+                <span className="transport-panel-tint" aria-hidden="true" />
+                <span className="transport-panel-name">{name}</span>
+                <span className="transport-panel-icon" aria-hidden="true"><Image src={icon} alt="" width={74} height={74} /></span>
+              </button>
+            ))}
           </div>
         </section>
 
@@ -207,13 +222,31 @@ export default function HomePage() {
         <section className="modern" id="features">
           <span id="modern-hub" className="legacy-anchor" aria-hidden="true" />
           <div className="modern-heading section-pad"><p className="eyebrow">TERMINAL FEATURES</p><h2>The Country’s First Landport</h2><p className="section-intro">PITX serves as your transfer point for provincial and in-city transportation, so you can conveniently commute</p></div>
-          <div className="feature-panel">
-            <div className="feature-image">
-              <div key={activeTab} className="feature-image-content" role="img" aria-label={featureTabs[activeTab].title} style={{ backgroundImage: `url(${featureTabs[activeTab].image})` }} />
-            </div>
-            <div className="feature-tabs" role="tablist" aria-label="PITX features">
-              <div className="feature-intro"><h2>Your Friendly and Modern Transport Hub</h2><p>Take advantage of these features when you visit PITX</p></div>
-              {featureTabs.map((tab, index) => <button key={tab.title} type="button" role="tab" aria-selected={activeTab === index} className={activeTab === index ? "active" : ""} onClick={() => setActiveTab(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{tab.title}</h3>{activeTab === index ? <p>{tab.text}</p> : null}</div></button>)}
+          <div className="feature-stage">
+            <div className="feature-panel">
+              <div className="feature-stack" aria-live="polite">
+                {featureTabs.map((tab, index) => {
+                  const previousDepth = (activeTab - index + featureTabs.length) % featureTabs.length;
+                  const stackStyle = index === activeTab
+                    ? { width: 400, height: 400, left: 0, top: 80, transform: "translate3d(0, 0, 0)", zIndex: 20, opacity: 1 }
+                    : previousDepth === 1
+                      ? { width: 360, height: 400, left: 20, top: 40, transform: "translate3d(0, 0, 0)", zIndex: 12, opacity: 1 }
+                      : previousDepth === 2
+                        ? { width: 320, height: 341, left: 40, top: 0, transform: "translate3d(0, 0, 0)", zIndex: 11, opacity: 1 }
+                        : { width: 0, height: 0, left: 0, top: 0, transform: "translate3d(0, 0, 0)", zIndex: 0, opacity: 0 };
+
+                  return <article className={`feature-stack-card${index === activeTab ? " active" : ""}`} key={tab.title} style={stackStyle} aria-hidden={index !== activeTab}>
+                    <Image src={tab.image} alt={index === activeTab ? tab.title : ""} fill sizes="400px" />
+                  </article>;
+                })}
+              </div>
+              <div className="feature-hero-copy">
+                <h2>Your Friendly and Modern<br />Transport Hub</h2>
+                <p>Take advantage of these features when you visit PITX</p>
+              </div>
+              <div className="feature-tabs" role="tablist" aria-label="PITX features">
+                {featureTabs.map((tab, index) => <button key={tab.title} type="button" role="tab" aria-selected={activeTab === index} className={activeTab === index ? "active" : ""} onClick={() => setActiveTab(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{tab.title}</h3>{activeTab === index ? <p>{tab.text}</p> : null}</div></button>)}
+              </div>
             </div>
           </div>
         </section>
@@ -233,7 +266,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="contact-map soft-reveal">
-              <iframe src="https://www.google.com/maps?q=Paranaque%20Integrated%20Terminal%20Exchange%2C%20%231%20Kennedy%20Rd.%2C%20Tambo%2C%20Paranaque%20City&output=embed" title="PITX location on Google Maps" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+              <ContactMap />
             </div>
           </div>
         </section>
