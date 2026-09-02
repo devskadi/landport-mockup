@@ -1062,7 +1062,7 @@ footer {
   }
 
   .trip-finder {
-    bottom: -123px;
+    bottom: -54px;
     left: 20px;
     right: 20px;
     display: grid;
@@ -1214,7 +1214,7 @@ footer {
 @media (max-width: 420px) {
   .trip-finder {
     grid-template-columns: 1fr;
-    bottom: -184px;
+    bottom: -54px;
   }
 
   .trip-tabs {
@@ -1848,3 +1848,10 @@ footer {
 
 
 .video-frame{min-height:0!important;height:auto!important;aspect-ratio:16/9}.video-frame iframe{height:100%!important;width:100%!important}
+
+
+@media (max-width: 420px) {
+  .schedule-link {
+    display: none;
+  }
+}
