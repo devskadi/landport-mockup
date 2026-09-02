@@ -44,8 +44,8 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
 
 const rideOptions = [
   { icon: "bus" as IconName, name: "Bus", copy: "Provincial & city routes", image: "/assets/choose-ride.jpg" },
-  { icon: "taxi" as IconName, name: "Taxi", copy: "Ride with ease", image: "/assets/commuting.jpg" },
-  { icon: "jeep" as IconName, name: "PUJ", copy: "Local connections", image: "/assets/home-banner.png" },
+  { icon: "taxi" as IconName, name: "Taxi", copy: "Ride with ease", image: "/assets/amenities.jpg" },
+  { icon: "jeep" as IconName, name: "PUJ", copy: "Local connections", image: "/assets/home-banner.jpg" },
   { icon: "train" as IconName, name: "LRT 1", copy: "Smooth interconnectivity", image: "/assets/gates.jpg" },
 ];
 
@@ -58,6 +58,7 @@ const updates = [
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [tripType, setTripType] = useState("One way");
 
   function handleSchedule(event: FormEvent<HTMLFormElement>) {
@@ -68,13 +69,13 @@ export default function Page() {
 
   return (
     <main className="page">
-      <div className="notice"><span>LIVE SERVICE UPDATE</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><a href="#schedule">VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></a></div>
+      <div className="notice"><span>LIVE SERVICE UPDATE</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><button className="notice-schedule" type="button" onClick={() => setScheduleOpen(true)}>VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></button></div>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="PITX home"><img src="/assets/logo.png" alt="PITX — Parañaque Integrated Terminal Exchange" /></a>
         <nav className={menuOpen ? "nav open" : "nav"} aria-label="Primary navigation">
           <a href="#about">About PITX</a><a href="#ride">Passenger&apos;s Guide</a><a href="#explore">Things to do</a><a href="#updates">News</a><a href="#contact">Contact us</a>
         </nav>
-        <a className="schedule-link" href="#schedule"><span className="pulse" />Live bus schedule</a>
+        <button className="schedule-link" type="button" onClick={() => setScheduleOpen(true)}><span className="pulse" />Live bus schedule</button>
         <button className="menu-button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
       </header>
 
@@ -87,19 +88,11 @@ export default function Page() {
           <p className="hero-copy">Safe, convenient and comfortable commuting begins at PITX—the gateway to the South and beyond.</p>
           <div className="hero-stats"><span><strong>24/7</strong>OPERATIONS</span><span><strong>100+</strong>DAILY ROUTES</span><span><strong>1</strong>CONNECTED HUB</span></div>
         </div>
-        <div className="hero-corner"><span>01</span><p>Your friendly and modern transport hub.</p></div>
 
-        <form className="trip-finder" onSubmit={handleSchedule} id="schedule">
-          <div className="finder-title"><span>PLAN YOUR TRIP</span><p>Find your next ride</p></div>
-          <div className="trip-tabs">{["One way", "Round trip"].map((type) => <button type="button" className={tripType === type ? "selected" : ""} onClick={() => setTripType(type)} key={type}>{tripType === type && <i />}{type}</button>)}</div>
-          <label className="finder-field"><Icon name="pin" /><span>FROM</span><select aria-label="Origin"><option>PITX, Parañaque</option><option>Metro Manila</option></select></label>
-          <span className="route-line"><Icon name="arrow" /></span>
-          <label className="finder-field"><Icon name="pin" /><span>TO</span><select aria-label="Destination"><option>Select destination</option><option>Cavite</option><option>Batangas</option><option>Laguna</option></select></label>
-          <label className="finder-field date-field"><Icon name="calendar" /><span>DATE</span><input aria-label="Travel date" type="date" defaultValue="2026-09-02" /></label>
-          <button className="search-button" type="submit"><Icon name="search" /><span>CHECK SCHEDULE</span></button>
-          {submitted && <p className="submit-note" role="status">Your schedule search is ready.</p>}
-        </form>
+        <form className="trip-finder pitx-finder" onSubmit={handleSchedule} id="schedule"><div className="finder-title"><span>PLAN YOUR TRIP</span><p>Find your next ride</p></div><label className="finder-field"><Icon name="pin"/><span>PROVINCE</span><select aria-label="Province"><option>Select province</option><option>Cavite</option><option>Batangas</option><option>Laguna</option></select></label><label className="finder-field"><Icon name="pin"/><span>CITY / MUNICIPALITY</span><select aria-label="City"><option>Select city</option><option>Batangas City</option><option>Dasmariñas</option><option>Lipa City</option></select></label><label className="finder-field"><Icon name="bus"/><span>TRANSPORT</span><select aria-label="Transport"><option>Select transport</option><option>Provincial Bus</option><option>City Bus</option><option>PUJ</option></select></label><button className="search-button" type="submit"><Icon name="search"/><span>FIND ROUTES</span></button>{submitted && <p className="submit-note" role="status">Your route options are ready.</p>}</form>
       </section>
+      {scheduleOpen && <><button className="drawer-backdrop" aria-label="Close live schedule" onClick={() => setScheduleOpen(false)}/><aside className="schedule-drawer" aria-label="Live bus schedule"><header><div><p className="eyebrow">Live bus schedule</p><h2>Departures <em>today.</em></h2></div><button onClick={() => setScheduleOpen(false)} aria-label="Close schedule"><Icon name="close"/></button></header><p className="drawer-date">WEDNESDAY, 02 SEPTEMBER 2026</p><div className="schedule-time">02:00 PM</div><div className="schedule-table"><div className="schedule-head"><span>OPERATOR / ROUTE</span><span>GATE · BAY</span><span>STATUS</span></div>{[["ALPS", "Batangas City", "2 · 08", "ARRIVING"],["JAM/LLI", "Lucena City", "2 · 10", "ARRIVING"],["SOLID NORTH", "Dagupan City", "5 · 35", "CANCELLED"],["Davao Metro Shuttle", "Davao City", "4 · 20", "BOARDING"]].map(([operator, route, gate, status]) => <div className="schedule-row" key={operator + route}><span><b>{operator}</b>{route}</span><span>{gate}</span><strong className={status.toLowerCase()}>{status}</strong></div>)}</div><a href="#schedule" onClick={() => setScheduleOpen(false)}>CHECK A ROUTE <Icon name="arrow" size={16}/></a></aside></>}
+
 
       <section className="intro intro-centered section" id="about"><p className="eyebrow">Welcome to PITX, friends!</p><h2>Moving <em>people.</em></h2><p className="intro-copy">Experience seamless interconnectivity from the moment you arrive until you reach your destination. With first-world facilities and friendly service, every journey is made simpler.</p><a className="intro-button" href="#features">Discover PITX <Icon name="arrow" size={17} /></a></section>
 
@@ -116,9 +109,9 @@ export default function Page() {
 
       <section className="updates" id="updates"><div className="section updates-inner"><div className="updates-title"><p className="eyebrow light">Latest updates</p><h2>What&apos;s happening<br /><em>at PITX.</em></h2><a className="button-light" href="#contact">VIEW ALL NEWS <Icon name="arrow" size={16} /></a></div><div className="news-list">{updates.map(([date, title], i) => <a href="#contact" className="news-item" key={title}><span>0{i + 1}</span><div><small>UPDATES · {date}</small><h3>{title}</h3></div><Icon name="arrow" /></a>)}</div></div></section>
 
-      <section className="video-feature section" aria-labelledby="pitx-video-title"><div className="section-heading video-heading"><div><p className="eyebrow">Inside PITX</p><h2 id="pitx-video-title">Terminal <em>in motion.</em></h2></div><p>Take a closer look at the country&apos;s first landport, built to make every commute safer, more convenient, and more connected.</p></div><a className="video-frame" href="https://pitx.ph/" target="_blank" rel="noreferrer" aria-label="View PITX video content on the official PITX website"><img src="/assets/gates.jpg" alt="PITX terminal bus bays" /><span className="video-wash" /><span className="video-kicker">PITX / IN MOTION</span><span className="video-play"><i /> WATCH PITX VIDEO</span><span className="video-caption">The country&apos;s first landport<br /><b>PARAÑAQUE, PHILIPPINES</b></span></a></section>
+      <section className="video-feature section" aria-labelledby="pitx-video-title"><div className="section-heading video-heading"><div><p className="eyebrow">Inside PITX</p><h2 id="pitx-video-title">Terminal <em>in motion.</em></h2></div><p>Take a closer look at the country&apos;s first landport, built to make every commute safer, more convenient, and more connected.</p></div><div className="video-frame" aria-label="PITX video"><iframe src="https://www.youtube.com/embed/TJGoXMjDUds?autoplay=1&mute=1&controls=0&loop=1&playlist=TJGoXMjDUds&playsinline=1" title="PITX" allow="autoplay; encrypted-media"/><a className="video-offix" href="http://offix.pitx.ph" target="_blank" rel="noreferrer">EXPLORE OFFIX TOWER <Icon name="arrow" size={16} /></a></div></section>
 
-      <section className="contact-section" id="contact"><div className="section contact-inner"><div className="contact-centered"><p className="eyebrow">Contact PITX</p><h2>Your journey, <em>simplified.</em></h2><p>For travel assistance, terminal information, and the latest updates, the PITX customer service team is ready to help.</p><div className="contact-actions"><a href="mailto:customerservice@pitx.com.ph"><span>EMAIL US</span><strong>customerservice@pitx.com.ph</strong><Icon name="arrow" size={17} /></a><a href="tel:83963817"><span>CALL US</span><strong>8396-3817 to 18</strong><Icon name="arrow" size={17} /></a><a href="https://goo.gl/maps/BU6MazNLy1nzmQUr5" target="_blank" rel="noreferrer"><span>VISIT PITX</span><strong>Get directions</strong><Icon name="arrow" size={17} /></a></div></div></div></section>
+      <section className="contact-section" id="contact"><div className="section contact-inner"><div className="contact-centered"><p className="eyebrow">Contact PITX</p><h2>Simplify <em> journey.</em></h2><p>For travel assistance, terminal information, and the latest updates, the PITX customer service team is ready to help.</p><div className="contact-actions"><a href="mailto:customerservice@pitx.com.ph"><span>EMAIL US</span><strong>customerservice@pitx.com.ph</strong><Icon name="arrow" size={17} /></a><a href="tel:83963817"><span>CALL US</span><strong>8396-3817 to 18</strong><Icon name="arrow" size={17} /></a><a href="https://goo.gl/maps/BU6MazNLy1nzmQUr5" target="_blank" rel="noreferrer"><span>VISIT PITX</span><strong>Get directions</strong><Icon name="arrow" size={17} /></a></div></div></div></section>
 
       <footer><div className="footer-top"><div><a className="footer-brand" href="#top"><img src="/assets/footer-logo.png" alt="PITX" /></a><p>Experience safe, convenient, and comfortable commute here at PITX, the country&apos;s first landport.</p></div><div className="contact-block"><span>Passenger&apos;s guide</span><a href="#ride">Transport</a><a href="#explore">Things to do</a><a href="#schedule">Live bus schedule</a></div><div className="contact-block"><span>Visit us</span><p>Parañaque Integrated Terminal Exchange<br />#1 Kennedy Rd., Tambo, Parañaque City</p></div></div><div className="footer-bottom"><p>© PITX 2026. All rights reserved.</p><div><a href="https://www.facebook.com/ParanaqueITX/">Facebook</a><a href="https://www.instagram.com/pitx_landport/">Instagram</a><a href="https://twitter.com/pitx_landport">X / Twitter</a></div></div></footer>
     </main>
