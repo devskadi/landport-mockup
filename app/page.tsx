@@ -1,5 +1,3 @@
-import HomePage from "./home-page";
-
 export default function Page() {
-  return <HomePage />;
+  return <main className="page" aria-label="PITX design foundation" />;
 }

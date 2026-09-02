@@ -1,6 +1,13 @@
-# PITX Next.js homepage clone
+# PITX design foundation
 
-An independent, component-based recreation of the PITX homepage. The original public visual assets are stored locally in `public/assets`; the site does not proxy or fetch PITX at runtime.
+A clean Next.js starting point for a new PITX digital experience. The previous homepage implementation has been removed from this branch.
+
+## Included foundation
+
+- PITX brand tokens: red `#EE3124`, blue, navy, ink, and neutral surfaces
+- System font stacks for interface and display typography
+- CSS reset and responsive page-layout primitives
+- Existing local assets remain in `public/assets` for future design work
 
 ## Run locally
 
@@ -9,6 +16,4 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-Only the homepage is implemented. Its navigation, mobile menu, feature tabs, live-schedule dialog, responsive layout, mail link, and external social/map links are functional.
+Open [http://localhost:3000](http://localhost:3000). The page is intentionally blank.
