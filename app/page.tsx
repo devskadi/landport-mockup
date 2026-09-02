@@ -45,8 +45,8 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
 const rideOptions = [
   { icon: "bus" as IconName, name: "Bus", copy: "Provincial & city routes", image: "/assets/choose-ride.jpg" },
   { icon: "taxi" as IconName, name: "Taxi", copy: "Ride with ease", image: "/assets/commuting.jpg" },
-  { icon: "jeep" as IconName, name: "PUJ", copy: "Local connections", image: "/assets/gates.jpg" },
-  { icon: "train" as IconName, name: "LRT Line 1", copy: "Smooth interconnectivity", image: "/assets/pitx-facade.png" },
+  { icon: "jeep" as IconName, name: "PUJ", copy: "Local connections", image: "/assets/home-banner.png" },
+  { icon: "train" as IconName, name: "LRT 1", copy: "Smooth interconnectivity", image: "/assets/gates.jpg" },
 ];
 
 const updates = [
