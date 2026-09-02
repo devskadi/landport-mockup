@@ -58,6 +58,10 @@ img {
   overflow: hidden;
 }
 
+.motion-root {
+  display: contents;
+}
+
 .notice {
   min-height: 35px;
   display: flex;
