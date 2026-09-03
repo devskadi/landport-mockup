@@ -186,7 +186,9 @@ img {
 .hero-image {
   position: absolute;
   inset: 0;
-  background: url('/assets/home-banner.jpg') center 46% / cover no-repeat;
+  background-position: center 46%;
+  background-size: cover;
+  background-repeat: no-repeat;
   filter: saturate(.9);
 }
 
