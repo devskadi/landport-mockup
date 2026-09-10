@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
 import ScrollReveal from "./components/ScrollReveal";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -59,11 +59,123 @@ const updates = [
   ["January 23, 2025", "PITX Launches Innovative GET EV Shuttle Service"],
 ];
 
+const careMessages = [
+  ["MR", "Mara R.", "Hello po, anong oras ang huling biyahe papuntang Batangas ngayong gabi?"],
+  ["PX", "PITX Information Desk", "Hello, Mara. Tutulungan ka naming tingnan ang pinakabagong departure board."],
+  ["JL", "Jules L.", "May accessible waiting area po ba malapit sa Gate 5?"],
+  ["PX", "PITX Information Desk", "Meron po. Maaari ka naming gabayan mula main entrance papunta sa accessible lounge."],
+  ["AN", "Ana N.", "Saan po puwedeng magtanong tungkol sa nawawalang gamit?"],
+  ["PX", "PITX Information Desk", "Dito po. Sabihin kung saan at kailan mo ito huling nakita—huwag magbahagi ng sensitibong detalye."],
+  ["RC", "Rico C.", "Salamat po sa mabilis na sagot."],
+  ["KC", "Kaye C.", "Saan po ang sakayan papuntang Tagaytay?"],
+  ["PX", "PITX Information Desk", "Pumunta po sa second floor at tingnan ang gate assignment sa departure board."],
+  ["DV", "Dino V.", "May biyahe po ba papuntang Dasmariñas ngayong hapon?"],
+  ["PX", "PITX Information Desk", "Meron po. I-check natin ang susunod na available na biyahe at gate."],
+  ["LS", "Liza S.", "Paano po pumunta sa People’s Park mula PITX?"],
+  ["PX", "PITX Information Desk", "May step-by-step route guide kami para diyan. Buksan ang thread sa ibaba."],
+] as const;
+
+const careThreads = [
+  "From PITX to People’s Park",
+  "From PITX to Enchanted Kingdom",
+  "From Enchanted Kingdom to PITX",
+  "From PITX to Tagaytay",
+  "From Tagaytay to PITX",
+  "From PITX to Batangas City",
+  "From PITX to Lucena",
+  "From PITX to Baguio",
+] as const;
+
+const careAnnouncements = [
+  "Paalala: Maaaring magbago ang gate assignment. Tingnan ang departure board bago sumakay.",
+  "Abiso: May dagdag na biyahe tuwing weekend para sa ilang ruta. Magtanong sa Information Desk.",
+  "Paalala: Panatilihing malapit ang ticket at personal na gamit habang nasa terminal.",
+] as const;
+
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [tripType, setTripType] = useState("One way");
+  const [careMessageCount, setCareMessageCount] = useState(8);
+  const [careChatVisible, setCareChatVisible] = useState(false);
+  const [careFullscreen, setCareFullscreen] = useState(false);
+  const careChatRef = useRef<HTMLElement>(null);
+  const careFeedRef = useRef<HTMLDivElement>(null);
+  const careInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const chat = careChatRef.current;
+    if (!chat) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setCareChatVisible(entry.isIntersecting),
+      { threshold: 0.25 },
+    );
+    observer.observe(chat);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!careChatVisible) return;
+    const interval = window.setInterval(() => {
+      setCareMessageCount((count) => count + 1);
+    }, 2600);
+    return () => window.clearInterval(interval);
+  }, [careChatVisible]);
+
+  useEffect(() => {
+    const feed = careFeedRef.current;
+    if (!feed) return;
+    feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" });
+  }, [careMessageCount]);
+
+  useEffect(() => {
+    if (!careFullscreen) return;
+
+    const lockedScrollY = window.scrollY;
+    const previousBodyStyles = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+    };
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const media = window.matchMedia("(max-width: 760px)");
+    const closeOnDesktop = () => {
+      if (!media.matches) setCareFullscreen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setCareFullscreen(false);
+    };
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.width = "100%";
+    media.addEventListener("change", closeOnDesktop);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyStyles.overflow;
+      document.body.style.position = previousBodyStyles.position;
+      document.body.style.top = previousBodyStyles.top;
+      document.body.style.width = previousBodyStyles.width;
+      media.removeEventListener("change", closeOnDesktop);
+      window.removeEventListener("keydown", closeOnEscape);
+      window.scrollTo({ top: lockedScrollY, behavior: "auto" });
+    };
+  }, [careFullscreen]);
+
+  function handleCarePanelClick(event: ReactMouseEvent<HTMLDivElement>) {
+    if (!careFullscreen && window.matchMedia("(max-width: 760px)").matches) {
+      const composerTapped = (event.target as Element).closest(".cares-composer");
+      if (!composerTapped) event.preventDefault();
+      setCareFullscreen(true);
+      if (composerTapped) careInputRef.current?.focus({ preventScroll: true });
+    }
+  }
 
   function handleSchedule(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,7 +186,7 @@ export default function Page() {
   return (
     <main className="page">
       <ScrollReveal>
-      <div className="notice"><span>LIVE SERVICE UPDATE</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><button className="notice-schedule" type="button" onClick={() => setScheduleOpen(true)}>VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></button></div>
+      <div className="notice"><span>THE PHILIPPINES&apos; FIRST LANDPORT</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><button className="notice-schedule" type="button" onClick={() => setScheduleOpen(true)}>VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></button></div>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="PITX home"><img src={assetPath("/assets/logo.png")} alt="PITX — Parañaque Integrated Terminal Exchange" /></a>
         <nav className={menuOpen ? "nav open" : "nav"} aria-label="Primary navigation">
@@ -90,17 +202,49 @@ export default function Page() {
         />
         <div className="hero-overlay" />
         <div className="hero-content" data-reveal="left" data-reveal-distance="28">
-          <p className="eyebrow light">Philippines&apos; first landport</p>
-          <h1>Welcome to PITX, friends!</h1>
+          <h1>Welcome to <span className="hero-nowrap">PITX, friends!</span></h1>
           <p className="hero-copy">Experience safe, convenient, and comfortable commute here at PITX, the country’s first landport.</p>
         </div>
 
-        <form className="trip-finder pitx-finder" data-reveal="up" data-reveal-delay="0.16" onSubmit={handleSchedule} id="schedule"><span className="finder-section-label finder-routes-label">Find Routes</span><label className="finder-field"><Icon name="pin"/><select aria-label="Province"><option>Select Province</option><option>Cavite</option><option>Batangas</option><option>Laguna</option></select></label><label className="finder-field"><Icon name="pin"/><select aria-label="City"><option>Select City</option><option>Batangas City</option><option>Dasmariñas</option><option>Lipa City</option></select></label><span className="finder-section-label finder-transport-label">Transport Options</span><label className="finder-field"><Icon name="bus"/><select aria-label="Transport"><option>Select Transport</option><option>Provincial Bus</option><option>City Bus</option><option>PUJ</option></select></label><button className="search-button" type="submit"><Icon name="search"/><span>FIND ROUTES</span></button>{submitted && <p className="submit-note" role="status">Your route options are ready.</p>}</form>
+        <div className={careFullscreen ? "cares-media hero-cares-media is-fullscreen" : "cares-media hero-cares-media"} data-reveal="up" data-reveal-delay="0.16" onClick={handleCarePanelClick}>
+          <button className="care-fullscreen-back" type="button" onClick={(event) => { event.stopPropagation(); setCareFullscreen(false); }} aria-label="Back to the PITX website"><Icon name="arrow" size={18} /><span>Back to website</span></button>
+          <div className="cares-image"><img src={assetPath("/assets/pitx-care-agent.png")} alt="PITX passenger care representative at the terminal information desk" /></div>
+          <aside ref={careChatRef} className="cares-chat" aria-label="PITX live passenger care preview">
+            <header className="cares-chat-header"><div><span className="cares-chat-mark"><img src={assetPath("/assets/pitx-information-desk-logo.png")} alt="" /></span><strong>#HowToGetTherePITX</strong></div><span className="cares-live"><i aria-hidden="true" />Live</span></header>
+            <div ref={careFeedRef} className="cares-feed" aria-live="polite">
+              {Array.from({ length: Math.min(9, careMessageCount) }, (_, visibleIndex) => {
+                const sequence = careMessageCount - Math.min(9, careMessageCount) + visibleIndex;
+                const [initials, name, message] = careMessages[sequence % careMessages.length];
+                const totalMinutes = (14 * 60) + 8 + sequence;
+                const time = `${String(Math.floor(totalMinutes / 60) % 24).padStart(2, "0")}:${String(totalMinutes % 60).padStart(2, "0")}`;
+                const isHost = initials === "PX";
+                return <div className="cares-feed-entry" key={sequence}>
+                  <div className="cares-message"><span className={isHost ? "cares-avatar host" : "cares-avatar"}>{initials}</span><p><span className="cares-meta"><strong>{name}</strong>{isHost ? <em>Official</em> : null}<time>{time}</time></span>{message}</p></div>
+                  {sequence % 4 === 3 ? <button className="cares-thread-link" type="button"><span>Route guide</span><strong>View Thread — {careThreads[Math.floor(sequence / 4) % careThreads.length]}</strong><Icon name="arrow" size={16} /></button> : null}
+                  {sequence % 5 === 2 ? <aside className="cares-announcement"><span>Announcement</span><p>{careAnnouncements[Math.floor(sequence / 5) % careAnnouncements.length]}</p></aside> : null}
+                </div>;
+              })}
+            </div>
+            <form className="cares-composer" onSubmit={(event) => event.preventDefault()}>
+              <input ref={careInputRef} type="text" inputMode="text" enterKeyHint="send" aria-label="Mensahe sa PITX Information Desk" placeholder="Mag-type ng mensahe…" />
+              <button type="submit" aria-label="Ipadala ang mensahe"><Icon name="arrow" size={17} /></button>
+            </form>
+          </aside>
+        </div>
       </section>
       {scheduleOpen && <><button className="drawer-backdrop" aria-label="Close live schedule" onClick={() => setScheduleOpen(false)}/><aside className="schedule-drawer" aria-label="Live bus schedule"><header><div><p className="eyebrow">Live bus schedule</p><h2>Departures <em>today</em></h2></div><button onClick={() => setScheduleOpen(false)} aria-label="Close schedule"><Icon name="close"/></button></header><p className="drawer-date">WEDNESDAY, 02 SEPTEMBER 2026</p><div className="schedule-time">02:00 PM</div><div className="schedule-table"><div className="schedule-head"><span>OPERATOR / ROUTE</span><span>GATE · BAY</span><span>STATUS</span></div>{[["ALPS", "Batangas City", "2 · 08", "ARRIVING"],["JAM/LLI", "Lucena City", "2 · 10", "ARRIVING"],["SOLID NORTH", "Dagupan City", "5 · 35", "CANCELLED"],["Davao Metro Shuttle", "Davao City", "4 · 20", "BOARDING"]].map(([operator, route, gate, status]) => <div className="schedule-row" key={operator + route}><span><b>{operator}</b>{route}</span><span>{gate}</span><strong className={status.toLowerCase()}>{status}</strong></div>)}</div><a href="#schedule" onClick={() => setScheduleOpen(false)}>CHECK A ROUTE <Icon name="arrow" size={16}/></a></aside></>}
 
 
       <section className="intro intro-centered section" id="about"><p className="eyebrow" data-reveal="up">Welcome to PITX, friends!</p><h2 data-reveal="up" data-reveal-delay="0.08">Moving <em>people</em></h2><p className="intro-copy" data-reveal="up" data-reveal-delay="0.14">Experience seamless interconnectivity from the moment you arrive until you reach your destination. With first-world facilities and friendly service, every journey is made simpler.</p><a className="intro-button" data-reveal="up" data-reveal-delay="0.2" href="#features">Discover PITX <Icon name="arrow" size={17} /></a></section>
+
+      <section className="pitx-cares route-planner-section section" aria-labelledby="route-planner-title" id="schedule">
+        <div className="cares-heading" data-reveal="up">
+          <p className="eyebrow">Your trip starts here</p>
+          <h2 id="route-planner-title">Find <em>your route</em></h2>
+          <p>Choose where you are headed and how you want to travel. We’ll help you find the right connection from PITX.</p>
+        </div>
+        <form className="trip-finder pitx-finder section-route-finder" data-reveal="up" data-reveal-delay="0.1" onSubmit={handleSchedule}><span className="finder-section-label finder-routes-label">Find Routes</span><label className="finder-field"><Icon name="pin"/><select aria-label="Province"><option>Select Province</option><option>Cavite</option><option>Batangas</option><option>Laguna</option></select></label><label className="finder-field"><Icon name="pin"/><select aria-label="City"><option>Select City</option><option>Batangas City</option><option>Dasmariñas</option><option>Lipa City</option></select></label><span className="finder-section-label finder-transport-label">Transport Options</span><label className="finder-field"><Icon name="bus"/><select aria-label="Transport"><option>Select Transport</option><option>Provincial Bus</option><option>City Bus</option><option>PUJ</option></select></label><button className="search-button" type="submit"><Icon name="search"/><span>FIND ROUTES</span></button>{submitted && <p className="submit-note" role="status">Your route options are ready.</p>}</form>
+      </section>
 
       <section className="rides section" id="ride">
         <div className="section-heading" data-reveal="up"><div><p className="eyebrow">Transportation</p><h2>Choose <em>your ride</em></h2></div></div>
