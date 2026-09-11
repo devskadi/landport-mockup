@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import ScrollReveal from "./components/ScrollReveal";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -59,22 +59,22 @@ const updates = [
   ["January 23, 2025", "PITX Launches Innovative GET EV Shuttle Service"],
 ];
 
+const departures = [
+  { time: "14:40", destination: "Batangas City", operator: "ALPS The Bus", gate: "7", bay: "12", status: "Boarding", tone: "tone-boarding" },
+  { time: "14:55", destination: "Naga", operator: "Philtranco", gate: "3", bay: "04", status: "On time", tone: "tone-ontime" },
+  { time: "15:10", destination: "Lucena", operator: "JAC Liner", gate: "5", bay: "21", status: "On time", tone: "tone-ontime" },
+  { time: "15:20", destination: "Laoag", operator: "Fariñas Trans", gate: "1", bay: "02", status: "Delayed 25m", tone: "tone-delayed" },
+  { time: "15:30", destination: "Sta. Ana", operator: "Victory Liner", gate: "2", bay: "09", status: "Cancelled", tone: "tone-cancelled" },
+  { time: "14:15", destination: "Dasmariñas", operator: "Saulog Transit", gate: "9", bay: "33", status: "Departed", tone: "tone-departed" },
+] as const;
+
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [tripType, setTripType] = useState("One way");
-
-  function handleSchedule(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-    window.setTimeout(() => setSubmitted(false), 3200);
-  }
 
   return (
     <main className="page">
       <ScrollReveal>
-      <div className="notice"><span>LIVE SERVICE UPDATE</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><button className="notice-schedule" type="button" onClick={() => setScheduleOpen(true)}>VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></button></div>
+      <div className="notice"><span>LIVE SERVICE UPDATE</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><a className="notice-schedule" href="#schedule">VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></a></div>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="PITX home"><img src={assetPath("/assets/logo.png")} alt="PITX — Parañaque Integrated Terminal Exchange" /></a>
         <nav className={menuOpen ? "nav open" : "nav"} aria-label="Primary navigation">
@@ -95,9 +95,8 @@ export default function Page() {
           <p className="hero-copy">Experience safe, convenient, and comfortable commute here at PITX, the country’s first landport.</p>
         </div>
 
-        <form className="trip-finder pitx-finder" data-reveal="up" data-reveal-delay="0.16" onSubmit={handleSchedule} id="schedule"><span className="finder-section-label finder-routes-label">Find Routes</span><label className="finder-field"><Icon name="pin"/><select aria-label="Province"><option>Select Province</option><option>Cavite</option><option>Batangas</option><option>Laguna</option></select></label><label className="finder-field"><Icon name="pin"/><select aria-label="City"><option>Select City</option><option>Batangas City</option><option>Dasmariñas</option><option>Lipa City</option></select></label><span className="finder-section-label finder-transport-label">Transport Options</span><label className="finder-field"><Icon name="bus"/><select aria-label="Transport"><option>Select Transport</option><option>Provincial Bus</option><option>City Bus</option><option>PUJ</option></select></label><button className="search-button" type="submit"><Icon name="search"/><span>FIND ROUTES</span></button>{submitted && <p className="submit-note" role="status">Your route options are ready.</p>}</form>
+        <section className="departures-board hero-departures" id="schedule" aria-labelledby="departures-title"><header className="departures-header"><div><p>Departures</p><h2 id="departures-title">Today, <em>10 September</em></h2></div><div className="departures-live"><span>Updated 14:32</span><i /> live</div></header><div className="departures-columns" aria-hidden="true"><span>Time</span><span>Destination</span><span>Operator</span><span>Gate</span><span>Bay</span><span>Status</span></div><div className="departures-list">{departures.map((departure) => <article className={`departure-row ${departure.tone}`} key={`${departure.time}-${departure.destination}`}><span className="departure-time" data-label="Time">{departure.time}</span><strong className="departure-destination" data-label="Destination">{departure.destination}</strong><span className="departure-operator" data-label="Operator">{departure.operator}</span><span className="departure-gate" data-label="Gate">{departure.gate}</span><span className="departure-bay" data-label="Bay">{departure.bay}</span><span className="departure-status" data-label="Status"><b>{departure.status}</b></span></article>)}</div><footer className="departures-footer"><p>Times and assignments may change. Please check terminal screens before boarding.</p><a href="#ride">VIEW ROUTE GUIDE <Icon name="arrow" size={16}/></a></footer></section>
       </section>
-      {scheduleOpen && <><button className="drawer-backdrop" aria-label="Close live schedule" onClick={() => setScheduleOpen(false)}/><aside className="schedule-drawer" aria-label="Live bus schedule"><header><div><p className="eyebrow">Live bus schedule</p><h2>Departures <em>today</em></h2></div><button onClick={() => setScheduleOpen(false)} aria-label="Close schedule"><Icon name="close"/></button></header><p className="drawer-date">WEDNESDAY, 02 SEPTEMBER 2026</p><div className="schedule-time">02:00 PM</div><div className="schedule-table"><div className="schedule-head"><span>OPERATOR / ROUTE</span><span>GATE · BAY</span><span>STATUS</span></div>{[["ALPS", "Batangas City", "2 · 08", "ARRIVING"],["JAM/LLI", "Lucena City", "2 · 10", "ARRIVING"],["SOLID NORTH", "Dagupan City", "5 · 35", "CANCELLED"],["Davao Metro Shuttle", "Davao City", "4 · 20", "BOARDING"]].map(([operator, route, gate, status]) => <div className="schedule-row" key={operator + route}><span><b>{operator}</b>{route}</span><span>{gate}</span><strong className={status.toLowerCase()}>{status}</strong></div>)}</div><a href="#schedule" onClick={() => setScheduleOpen(false)}>CHECK A ROUTE <Icon name="arrow" size={16}/></a></aside></>}
 
 
       <section className="intro intro-centered section" id="about"><p className="eyebrow" data-reveal="up">Welcome to PITX, friends!</p><h2 data-reveal="up" data-reveal-delay="0.08">Moving <em>people</em></h2><p className="intro-copy" data-reveal="up" data-reveal-delay="0.14">Experience seamless interconnectivity from the moment you arrive until you reach your destination. With first-world facilities and friendly service, every journey is made simpler.</p><a className="intro-button" data-reveal="up" data-reveal-delay="0.2" href="#features">Discover PITX <Icon name="arrow" size={17} /></a></section>
