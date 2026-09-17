@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import ScrollReveal from "./components/ScrollReveal";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -59,6 +60,15 @@ const updates = [
   ["January 23, 2025", "PITX Launches Innovative GET EV Shuttle Service"],
 ];
 
+const departures = [
+  { time: "14:40", destination: "Batangas City", operator: "ALPS The Bus", gate: "7", bay: "12", status: "Boarding", tone: "tone-boarding" },
+  { time: "14:55", destination: "Naga", operator: "Philtranco", gate: "3", bay: "04", status: "On time", tone: "tone-ontime" },
+  { time: "15:10", destination: "Lucena", operator: "JAC Liner", gate: "5", bay: "21", status: "On time", tone: "tone-ontime" },
+  { time: "15:20", destination: "Laoag", operator: "Fariñas Trans", gate: "1", bay: "02", status: "Delayed 25m", tone: "tone-delayed" },
+  { time: "15:30", destination: "Sta. Ana", operator: "Victory Liner", gate: "2", bay: "09", status: "Cancelled", tone: "tone-cancelled" },
+  { time: "14:15", destination: "Dasmariñas", operator: "Saulog Transit", gate: "9", bay: "33", status: "Departed", tone: "tone-departed" },
+] as const;
+
 const careMessages = [
   ["MR", "Mara R.", "Hello po, anong oras ang huling biyahe papuntang Batangas ngayong gabi?"],
   ["PX", "PITX Information Desk", "Hello, Mara. Tutulungan ka naming tingnan ang pinakabagong departure board."],
@@ -93,6 +103,8 @@ const careAnnouncements = [
 ] as const;
 
 export default function Page() {
+  const pathname = usePathname();
+  const isDeparturesPage = pathname.endsWith("/feature/departures-board");
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
@@ -184,9 +196,9 @@ export default function Page() {
   }
 
   return (
-    <main className="page">
+    <main className={isDeparturesPage ? "page departures-variant" : "page"}>
       <ScrollReveal>
-      <div className="notice"><span>THE PHILIPPINES&apos; FIRST LANDPORT</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p><button className="notice-schedule" type="button" onClick={() => setScheduleOpen(true)}>VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></button></div>
+      <div className="notice"><span>THE PHILIPPINES&apos; FIRST LANDPORT</span><p>Plan your commute ahead. Check the latest bus schedule before you travel.</p>{isDeparturesPage ? <a className="notice-schedule" href="#schedule">VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></a> : <button className="notice-schedule" type="button" onClick={() => setScheduleOpen(true)}>VIEW LIVE SCHEDULE <Icon name="arrow" size={15} /></button>}</div>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="PITX home"><img src={assetPath("/assets/logo.png")} alt="PITX — Parañaque Integrated Terminal Exchange" /></a>
         <nav className={menuOpen ? "nav open" : "nav"} aria-label="Primary navigation">
@@ -206,7 +218,7 @@ export default function Page() {
           <p className="hero-copy">Experience safe, convenient, and comfortable commute here at PITX, the country’s first landport.</p>
         </div>
 
-        <div className={careFullscreen ? "cares-media hero-cares-media is-fullscreen" : "cares-media hero-cares-media"} data-reveal="up" data-reveal-delay="0.16" onClick={handleCarePanelClick}>
+        {isDeparturesPage ? <section className="departures-board hero-departures" id="schedule" aria-labelledby="departures-title"><header className="departures-header"><div><p>Departures</p><h2 id="departures-title">Today, <em>10 September</em></h2></div><div className="departures-live"><span>Updated 14:32</span><i /> live</div></header><div className="departures-columns" aria-hidden="true"><span>Time</span><span>Destination</span><span>Operator</span><span>Gate</span><span>Bay</span><span>Status</span></div><div className="departures-list">{departures.map((departure) => <article className={`departure-row ${departure.tone}`} key={`${departure.time}-${departure.destination}`}><span className="departure-time">{departure.time}</span><strong className="departure-destination">{departure.destination}</strong><span className="departure-operator">{departure.operator}</span><span className="departure-gate">{departure.gate}</span><span className="departure-bay">{departure.bay}</span><span className="departure-status"><b>{departure.status}</b></span></article>)}</div><footer className="departures-footer"><p>Times and assignments may change. Please check terminal screens before boarding.</p><a href="#ride">VIEW ROUTE GUIDE <Icon name="arrow" size={16}/></a></footer></section> : <div className={careFullscreen ? "cares-media hero-cares-media is-fullscreen" : "cares-media hero-cares-media"} data-reveal="up" data-reveal-delay="0.16" onClick={handleCarePanelClick}>
           <button className="care-fullscreen-back" type="button" onClick={(event) => { event.stopPropagation(); setCareFullscreen(false); }} aria-label="Back to the PITX website"><Icon name="arrow" size={18} /><span>Back to website</span></button>
           <div className="cares-image"><img src={assetPath("/assets/pitx-care-agent.png")} alt="PITX passenger care representative at the terminal information desk" /></div>
           <aside ref={careChatRef} className="cares-chat" aria-label="PITX live passenger care preview">
@@ -230,7 +242,7 @@ export default function Page() {
               <button type="submit" aria-label="Ipadala ang mensahe"><Icon name="arrow" size={17} /></button>
             </form>
           </aside>
-        </div>
+        </div>}
       </section>
       {scheduleOpen && <><button className="drawer-backdrop" aria-label="Close live schedule" onClick={() => setScheduleOpen(false)}/><aside className="schedule-drawer" aria-label="Live bus schedule"><header><div><p className="eyebrow">Live bus schedule</p><h2>Departures <em>today</em></h2></div><button onClick={() => setScheduleOpen(false)} aria-label="Close schedule"><Icon name="close"/></button></header><p className="drawer-date">WEDNESDAY, 02 SEPTEMBER 2026</p><div className="schedule-time">02:00 PM</div><div className="schedule-table"><div className="schedule-head"><span>OPERATOR / ROUTE</span><span>GATE · BAY</span><span>STATUS</span></div>{[["ALPS", "Batangas City", "2 · 08", "ARRIVING"],["JAM/LLI", "Lucena City", "2 · 10", "ARRIVING"],["SOLID NORTH", "Dagupan City", "5 · 35", "CANCELLED"],["Davao Metro Shuttle", "Davao City", "4 · 20", "BOARDING"]].map(([operator, route, gate, status]) => <div className="schedule-row" key={operator + route}><span><b>{operator}</b>{route}</span><span>{gate}</span><strong className={status.toLowerCase()}>{status}</strong></div>)}</div><a href="#schedule" onClick={() => setScheduleOpen(false)}>CHECK A ROUTE <Icon name="arrow" size={16}/></a></aside></>}
 
